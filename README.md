@@ -1,6 +1,6 @@
 # Unity Texture2D Compression Toolkit
 
-遊戲開發後期時，提升遊戲 Loading Time 並減少遊戲容量，自動最佳化圖片格式的工具。
+根據壓縮演算法之需求，自動最佳化圖片格式，能夠顯著加快讀取時間並減少遊戲容量。
 
 ## 功能列表
 

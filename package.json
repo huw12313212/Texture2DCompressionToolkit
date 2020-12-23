@@ -1,0 +1,19 @@
+{
+  "name": "com.redcandlegames.texturecompressiontoolkit",
+  "version": "0.0.1",
+  "displayName": "TextureCompressionToolkit",
+  "description": "Texture Compression Toolkit from redcandlegames",
+  "unity": "2017.1",
+  "keywords": [
+    "Texture2D",
+    "Texture",
+    "Compression"
+  ],
+  "author": {
+    "name": "HenryWang",
+    "email": "henrywang@redcandlegames.com",
+    "url": "https://redcandlegames.com/"
+  },
+  "type": "tool",
+  "hideInEditor": false
+}

@@ -11,5 +11,4 @@
 
 在 Unity 的 Package Manager 中增加外部 Package git 路徑後直接進行安裝。
 
-` git://gitlab.redcandlegames.com:30000/huw12313212/Texture2DCompressionToolkit.git`
-
+` git://gitlab.redcandlegames.com/huw12313212/Texture2DCompressionToolkit.git`

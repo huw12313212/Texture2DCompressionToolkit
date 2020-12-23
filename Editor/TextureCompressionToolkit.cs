@@ -118,7 +118,7 @@ public class TextureCompressionToolkit : MonoBehaviour
         }
 
 
-        texture.EncodeToEXR();
+       // texture.EncodeToEXR();
 
         File.Delete(path);
         File.WriteAllBytes(path, bytes);

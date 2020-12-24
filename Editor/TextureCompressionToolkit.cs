@@ -55,7 +55,7 @@ public class TextureCompressionToolkit : MonoBehaviour
            !path.ToLower().EndsWith(".tga") &&
             !path.ToLower().EndsWith(".exr")*/)
             {
-                Debug.LogError("It's not a PNG/JPG/JPEG file: " + path);
+                Debug.LogError("It's not a PNG/JPG/JPEG file: " + path, sprite);
                 continue;
             }
             else
@@ -80,12 +80,11 @@ public class TextureCompressionToolkit : MonoBehaviour
 
         if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
         {
-            Debug.LogError("[Error] Please Remove Max Size : " + path);
-            return;
+            Debug.LogError("[Error] Please Remove Max Size : " + path, sprite);
         }
         else if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
-            Debug.Log("[Ignore] " + path + " is already MultipleOf4");
+            // Debug.Log("[Ignore] " + path + " is already MultipleOf4");
             return;
         }
 

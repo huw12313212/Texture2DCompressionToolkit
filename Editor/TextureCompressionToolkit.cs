@@ -10,11 +10,38 @@ public class TextureCompressionToolkit : MonoBehaviour
     [MenuItem("Assets/RCGs/TextureCompressionToolkit/Sprite2D-Resize-MultipluOf4")]
     static void Sprite2DResize()
     {
+        //Remove Duplicate Entry
+        List<string> allPaths = new List<string>();
         for (int i = 0; i < Selection.objects.Length; i++)
         {
             Object obj = Selection.objects[i];
             var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+            if (!allPaths.Contains(path))
+            {
+                allPaths.Add(path);
+            }
+            else
+            {
+                // Debug.Log("[Ignore] Detect Duplicated Path: " + path);
+            }
+        }
+
+
+        for (int i = 0; i < allPaths.Count; i++)
+        {
+            var path = allPaths[i];
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
+            Object[] data = AssetDatabase.LoadAllAssetsAtPath(path);
+
+
+
+            if (sprite == null)
+            {
+                if (data.Length > 0 && data[0] is Sprite)
+                {
+                    sprite = data[0] as Sprite;
+                }
+            }
 
             if (sprite == null)
             {
@@ -32,15 +59,15 @@ public class TextureCompressionToolkit : MonoBehaviour
             }
             else
             {
-                ResizeToMultipleOf4(sprite, path);
+                bool isMultiple = sprite.textureRect.width != sprite.texture.width || sprite.textureRect.height != sprite.texture.height;
+                ResizeToMultipleOf4(sprite, path, isMultiple);
             }
         }
-
         AssetDatabase.Refresh();
     }
 
 
-    public static void ResizeToMultipleOf4(Sprite sprite, string path)
+    public static void ResizeToMultipleOf4(Sprite sprite, string path, bool isMultiple)
     {
         int originalWidth = sprite.texture.width;
         int originalHeight = sprite.texture.height;
@@ -50,21 +77,35 @@ public class TextureCompressionToolkit : MonoBehaviour
 
         if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
-            Debug.Log(path + " is already MultipleOf4");
+            //Debug.Log("[Ignore] " + path + " is already MultipleOf4");
             return;
         }
 
         int fullXPadding = (targetWidth - originalWidth);
         int fullYPadding = (targetHeight - originalHeight);
-        // int halfXPadding = Mathf.FloorToInt(fullXPadding / 2.0f);
-        //int halfYPadding = Mathf.FloorToInt(fullYPadding / 2.0f);
-
-        Debug.Log(sprite.pivot);
-
-        int offsetX = Mathf.FloorToInt(fullXPadding * (sprite.pivot.x / (float)sprite.texture.width));
-        int offsetY = Mathf.FloorToInt(fullYPadding * (sprite.pivot.y / (float)sprite.texture.height));
 
 
+        //  isSpriteMultipleEntry = sprite.textureRect.width != originalWidth || sprite.textureRect.height != originalHeight;
+
+
+        int offsetX = 0;
+        int offsetY = 0;
+
+        // Debug.Log("isMultiple:" + isMultiple);
+
+        if (isMultiple)
+        {
+            offsetX = 0;
+            offsetY = 0;
+
+            //Debug.Log("multiple:" + offsetY);
+
+        }
+        else
+        {
+            offsetX = Mathf.FloorToInt(fullXPadding * (sprite.pivot.x / (float)sprite.texture.width));
+            offsetY = Mathf.FloorToInt(fullYPadding * (sprite.pivot.y / (float)sprite.texture.height));
+        }
 
 
         Texture2D originalTexture = new Texture2D(originalWidth, originalHeight);
@@ -118,7 +159,7 @@ public class TextureCompressionToolkit : MonoBehaviour
         }
 
 
-       // texture.EncodeToEXR();
+        // texture.EncodeToEXR();
 
         File.Delete(path);
         File.WriteAllBytes(path, bytes);

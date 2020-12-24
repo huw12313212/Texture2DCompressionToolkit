@@ -7,8 +7,8 @@ using System.IO;
 public class TextureCompressionToolkit : MonoBehaviour
 {
 
-    [MenuItem("Assets/RCGs/TextureCompressionToolkit/Sprite2D-Resize-MultipluOf4")]
-    static void Sprite2DResize()
+    [MenuItem("Assets/RCGs/TextureCompressionToolkit/Sprite2D-Resize-MultipluOf4-And-ChrunchCompress")]
+    static void Sprite2DResizeAndChrunchCompress()
     {
         //Remove Duplicate Entry
         List<string> allPaths = new List<string>();
@@ -61,7 +61,7 @@ public class TextureCompressionToolkit : MonoBehaviour
             else
             {
                 bool isMultiple = sprite.textureRect.width != sprite.texture.width || sprite.textureRect.height != sprite.texture.height;
-                ResizeToMultipleOf4(sprite, path, isMultiple);
+                ResizeToMultipleOf4AndChrunchCompress(sprite, path, isMultiple);
             }
         }
 
@@ -70,7 +70,7 @@ public class TextureCompressionToolkit : MonoBehaviour
     }
 
 
-    public static void ResizeToMultipleOf4(Sprite sprite, string path, bool isMultiple)
+    public static void ResizeToMultipleOf4AndChrunchCompress(Sprite sprite, string path, bool isMultiple)
     {
         Texture2D originalTexture = new Texture2D(1, 1);
         originalTexture.LoadImage(File.ReadAllBytes(path));
@@ -79,14 +79,16 @@ public class TextureCompressionToolkit : MonoBehaviour
         int targetWidth = FindNextMultipleOf4(originalWidth);
         int targetHeight = FindNextMultipleOf4(originalHeight);
 
+        TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        importer.crunchedCompression = true;
 
         if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
         {
-            Debug.LogError("[Error] Please Remove Max Size : " + path, sprite);
+            importer.maxTextureSize = 4096;
+            Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
         }
         else if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
-            // Debug.Log("[Ignore] " + path + " is already MultipleOf4");
             return;
         }
 

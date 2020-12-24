@@ -34,7 +34,7 @@ public class TextureCompressionToolkit : MonoBehaviour
             Object[] data = AssetDatabase.LoadAllAssetsAtPath(path);
 
 
-
+            EditorUtility.DisplayProgressBar("Resize selected textures.", "file:" + path, i / (float)allPaths.Count);
 
             if (sprite == null)
             {
@@ -64,6 +64,8 @@ public class TextureCompressionToolkit : MonoBehaviour
                 ResizeToMultipleOf4(sprite, path, isMultiple);
             }
         }
+
+        EditorUtility.ClearProgressBar();
         AssetDatabase.Refresh();
     }
 

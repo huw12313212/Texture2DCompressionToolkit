@@ -84,14 +84,14 @@ public class TextureCompressionToolkit : MonoBehaviour
 
         if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
         {
+            
             importer.maxTextureSize = 4096;
             Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
         }
 
-        AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
-
         if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
+            AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
             return;
         }
 
@@ -169,6 +169,7 @@ public class TextureCompressionToolkit : MonoBehaviour
         DestroyImmediate(texture);
         DestroyImmediate(originalTexture);
         Debug.Log(path + " From (" + originalWidth + ":" + originalHeight + ")" + " -> To (" + targetWidth + ":" + targetHeight + ")", sprite);
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
     }
 
     public static int FindNextMultipleOf4(int value)

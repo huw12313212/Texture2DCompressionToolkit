@@ -35,6 +35,7 @@ public class TextureCompressionToolkit : MonoBehaviour
 
 
 
+
             if (sprite == null)
             {
                 if (data.Length > 0 && data[0] is Sprite)
@@ -50,11 +51,11 @@ public class TextureCompressionToolkit : MonoBehaviour
             }
             else if (!path.ToLower().EndsWith(".png") &&
             !path.ToLower().EndsWith(".jpg") &&
-            !path.ToLower().EndsWith(".jpeg") &&
-            !path.ToLower().EndsWith(".tga") &&
-            !path.ToLower().EndsWith(".exr"))
+            !path.ToLower().EndsWith(".jpeg") /*&&
+           !path.ToLower().EndsWith(".tga") &&
+            !path.ToLower().EndsWith(".exr")*/)
             {
-                Debug.LogError("It's not a PNG/JPG/JPEG/TGA/EXR file: " + path);
+                Debug.LogError("It's not a PNG/JPG/JPEG file: " + path);
                 continue;
             }
             else
@@ -69,36 +70,35 @@ public class TextureCompressionToolkit : MonoBehaviour
 
     public static void ResizeToMultipleOf4(Sprite sprite, string path, bool isMultiple)
     {
-        int originalWidth = sprite.texture.width;
-        int originalHeight = sprite.texture.height;
+        Texture2D originalTexture = new Texture2D(1, 1);
+        originalTexture.LoadImage(File.ReadAllBytes(path));
+        int originalWidth = originalTexture.width;
+        int originalHeight = originalTexture.height;
         int targetWidth = FindNextMultipleOf4(originalWidth);
         int targetHeight = FindNextMultipleOf4(originalHeight);
 
 
-        if (originalWidth == targetWidth && originalHeight == targetHeight)
+        if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
         {
-            //Debug.Log("[Ignore] " + path + " is already MultipleOf4");
+            Debug.LogError("[Error] Please Remove Max Size : " + path);
+            return;
+        }
+        else if (originalWidth == targetWidth && originalHeight == targetHeight)
+        {
+            Debug.Log("[Ignore] " + path + " is already MultipleOf4");
             return;
         }
 
         int fullXPadding = (targetWidth - originalWidth);
         int fullYPadding = (targetHeight - originalHeight);
 
-
-        //  isSpriteMultipleEntry = sprite.textureRect.width != originalWidth || sprite.textureRect.height != originalHeight;
-
-
         int offsetX = 0;
         int offsetY = 0;
-
-        // Debug.Log("isMultiple:" + isMultiple);
 
         if (isMultiple)
         {
             offsetX = 0;
             offsetY = 0;
-
-            //Debug.Log("multiple:" + offsetY);
 
         }
         else
@@ -106,10 +106,6 @@ public class TextureCompressionToolkit : MonoBehaviour
             offsetX = Mathf.FloorToInt(fullXPadding * (sprite.pivot.x / (float)sprite.texture.width));
             offsetY = Mathf.FloorToInt(fullYPadding * (sprite.pivot.y / (float)sprite.texture.height));
         }
-
-
-        Texture2D originalTexture = new Texture2D(originalWidth, originalHeight);
-        originalTexture.LoadImage(File.ReadAllBytes(path));
 
         Texture2D texture = new Texture2D(targetWidth, targetHeight);
 
@@ -149,14 +145,14 @@ public class TextureCompressionToolkit : MonoBehaviour
         {
             bytes = texture.EncodeToJPG();
         }
-        else if (path.ToLower().EndsWith(".tga"))
-        {
-            bytes = texture.EncodeToTGA();
-        }
-        else if (path.ToLower().EndsWith(".exr"))
-        {
-            bytes = texture.EncodeToEXR();
-        }
+        /* else if (path.ToLower().EndsWith(".tga"))
+         {
+             bytes = texture.EncodeToTGA();
+         }
+         else if (path.ToLower().EndsWith(".exr"))
+         {
+             bytes = texture.EncodeToEXR();
+         }*/
 
 
         // texture.EncodeToEXR();

@@ -161,7 +161,7 @@ public class TextureCompressionToolkit : MonoBehaviour
 
         DestroyImmediate(texture);
         DestroyImmediate(originalTexture);
-        Debug.Log(path + " From (" + originalWidth + ":" + originalHeight + ")" + " -> To (" + targetWidth + ":" + targetHeight + ")");
+        Debug.Log(path + " From (" + originalWidth + ":" + originalHeight + ")" + " -> To (" + targetWidth + ":" + targetHeight + ")", sprite);
     }
 
     public static int FindNextMultipleOf4(int value)

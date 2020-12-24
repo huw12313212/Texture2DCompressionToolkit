@@ -87,7 +87,10 @@ public class TextureCompressionToolkit : MonoBehaviour
             importer.maxTextureSize = 4096;
             Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
         }
-        else if (originalWidth == targetWidth && originalHeight == targetHeight)
+
+        AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
+
+        if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
             return;
         }

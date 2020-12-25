@@ -7,6 +7,39 @@ using System.IO;
 public class TextureCompressionToolkit : MonoBehaviour
 {
 
+    [MenuItem("RCGs/TextureCompressionToolkit/ApplyToProject/Sprite2D-Resize-MultipluOf4-And-ChrunchCompress")]
+    static void Sprite2DResizeAndChrunchCompressToToProject()
+    {
+        string[] all = AssetDatabase.GetAllAssetPaths();
+        List<string> allPaths = new List<string>();
+
+        for (int i = 0; i < all.Length; i++)
+        {
+            string path = all[i];
+
+            if (!path.StartsWith("Assets/") && !path.StartsWith("Packages/com.redcandlegames.texturecompressiontoolkit/"))
+                continue;
+
+
+            if (path.ToLower().EndsWith(".png") ||
+            path.ToLower().EndsWith(".jpg") ||
+            path.ToLower().EndsWith(".jpeg"))
+            {
+                if (!allPaths.Contains(path))
+                {
+                    allPaths.Add(path);
+                }
+                else
+                {
+                    // Debug.Log("[Ignore] Detect Duplicated Path: " + path);
+                }
+            }
+
+        }
+
+        Sprite2DResizeAndChrunchCompress(allPaths);
+    }
+
     [MenuItem("Assets/RCGs/TextureCompressionToolkit/Sprite2D-Resize-MultipluOf4-And-ChrunchCompress")]
     static void Sprite2DResizeAndChrunchCompress()
     {
@@ -16,25 +49,35 @@ public class TextureCompressionToolkit : MonoBehaviour
         {
             Object obj = Selection.objects[i];
             var path = AssetDatabase.GetAssetPath(obj.GetInstanceID());
-            if (!allPaths.Contains(path))
+
+            if (path.ToLower().EndsWith(".png") ||
+                 path.ToLower().EndsWith(".jpg") ||
+                 path.ToLower().EndsWith(".jpeg"))
             {
-                allPaths.Add(path);
-            }
-            else
-            {
-                // Debug.Log("[Ignore] Detect Duplicated Path: " + path);
+                if (!allPaths.Contains(path))
+                {
+                    allPaths.Add(path);
+                }
+                else
+                {
+                    // Debug.Log("[Ignore] Detect Duplicated Path: " + path);
+                }
             }
         }
+        Sprite2DResizeAndChrunchCompress(allPaths);
+    }
 
+    public static void Sprite2DResizeAndChrunchCompress(List<string> allPaths)
+    {
 
         for (int i = 0; i < allPaths.Count; i++)
         {
             var path = allPaths[i];
+            EditorUtility.DisplayProgressBar("Texture Format Optimization", path, i / (float)allPaths.Count);
+
             Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(path);
             Object[] data = AssetDatabase.LoadAllAssetsAtPath(path);
 
-
-            EditorUtility.DisplayProgressBar("Resize selected textures.", "file:" + path, i / (float)allPaths.Count);
 
             if (sprite == null)
             {
@@ -55,7 +98,7 @@ public class TextureCompressionToolkit : MonoBehaviour
            !path.ToLower().EndsWith(".tga") &&
             !path.ToLower().EndsWith(".exr")*/)
             {
-                Debug.LogError("It's not a PNG/JPG/JPEG file: " + path, sprite);
+                Debug.LogWarning("[skip] It's not a PNG/JPG/JPEG file: " + path, sprite);
                 continue;
             }
             else
@@ -66,6 +109,8 @@ public class TextureCompressionToolkit : MonoBehaviour
         }
 
         EditorUtility.ClearProgressBar();
+
+
         AssetDatabase.Refresh();
     }
 
@@ -80,18 +125,23 @@ public class TextureCompressionToolkit : MonoBehaviour
         int targetHeight = FindNextMultipleOf4(originalHeight);
 
         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
+        bool wasCrunchedCompression = importer.crunchedCompression;
+        bool dirty = false;
+
         importer.crunchedCompression = true;
 
         if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
         {
-            
             importer.maxTextureSize = 4096;
             Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
         }
 
         if (originalWidth == targetWidth && originalHeight == targetHeight)
         {
-            AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
+            if (!wasCrunchedCompression)
+            {
+                AssetDatabase.ImportAsset(path, ImportAssetOptions.Default);
+            }
             return;
         }
 

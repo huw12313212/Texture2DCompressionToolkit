@@ -1,6 +1,6 @@
 {
   "name": "com.redcandlegames.texturecompressiontoolkit",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "displayName": "TextureCompressionToolkit",
   "description": "Texture Compression Toolkit from RedCandleGames",
   "unity": "2017.1",

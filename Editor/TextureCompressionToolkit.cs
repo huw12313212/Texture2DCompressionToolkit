@@ -119,6 +119,7 @@ public class TextureCompressionToolkit : MonoBehaviour
     {
         Texture2D originalTexture = new Texture2D(1, 1);
         originalTexture.LoadImage(File.ReadAllBytes(path));
+
         int originalWidth = originalTexture.width;
         int originalHeight = originalTexture.height;
         int targetWidth = FindNextMultipleOf4(originalWidth);
@@ -126,14 +127,16 @@ public class TextureCompressionToolkit : MonoBehaviour
 
         TextureImporter importer = AssetImporter.GetAtPath(path) as TextureImporter;
         bool wasCrunchedCompression = importer.crunchedCompression;
-        bool dirty = false;
-
         importer.crunchedCompression = true;
 
-        if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
+
+        if (sprite.texture.width % 4 != 0 || sprite.texture.height % 4 != 0)
         {
-            importer.maxTextureSize = 4096;
-            Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
+            if (sprite.texture.width != originalWidth || sprite.texture.height != originalHeight)
+            {
+                importer.maxTextureSize = 4096;
+                Debug.Log("[Modify] " + path + "  importer.maxTextureSize = 4096", sprite);
+            }
         }
 
         if (originalWidth == targetWidth && originalHeight == targetHeight)

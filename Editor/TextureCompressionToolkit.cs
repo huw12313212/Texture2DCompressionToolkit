@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 using System.IO;
 
 public class TextureCompressionToolkit : MonoBehaviour
 {
-
+#if UNITY_EDITOR
     [MenuItem("RCGs/TextureCompressionToolkit/ApplyToProject/Sprite2D-Resize-MultipluOf4-And-ChrunchCompress")]
     static void Sprite2DResizeAndChrunchCompressToToProject()
     {
@@ -244,6 +246,6 @@ public class TextureCompressionToolkit : MonoBehaviour
     }
 
 
-
+#endif
 
 }
